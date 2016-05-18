@@ -11,9 +11,11 @@ int default_servo_angle = 46;  // 初期位置合わせ
 int unit_angle = 15; // 必要角度
 int servo_angle = default_servo_angle;
 
+#include <Adafruit_SleepyDog.h>
+
 void setup () {
   // init RTC
-    Serial.begin(9600);
+    Serial.begin(115200);
     Wire.begin();
     RTC.begin();
  
@@ -31,6 +33,18 @@ void setup () {
 }
  
 void loop () {
+  // Sleep
+  Hoge hoge();
+  h = hoge.hello();
+  Serial.print(h);
+  delay(1000);
+  int sleepMS = Watchdog.sleep();
+  Serial.print("I'm awake now!  I slept for ");
+  Serial.print(sleepMS, DEC);
+  Serial.println(" milliseconds.");
+  Serial.println();
+  return;
+
   int *ret;
   int hms[3];
   ret = timer(hms);
@@ -46,6 +60,7 @@ void loop () {
     servo_angle = default_servo_angle;
   }
   mv_servo(servo_angle);
+
 }
 
 int *timer(int *hms) {
@@ -78,5 +93,6 @@ int *timer(int *hms) {
 void mv_servo(int angle) {
   Serial.println(angle);
   myservo.write(angle);
+  Serial.println();
 }
 
