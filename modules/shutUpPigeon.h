@@ -1,22 +1,25 @@
 /**
- * shutUpPigeon.h - Library for shutting up a pigon.
+ * ShutUpPigeon.h - Library for shutting up a pigon.
  */
-#ifndef shutUpPigeon_h_
-#define shutUpPigeon_h_
+
+#ifndef ShutUpPigeon_h
+#define ShutUpPigeon_h
 #include "Arduino.h"
 
-class shutUpPigeon {
+class ShutUpPigeon {
   public:
-    shutUpPigeon(char start, char end);
-
-  public:
-    void init(void);
-    void canSing(void);
+    ShutUpPigeon(void);
+    void init(char start[], char end[]);
+    bool canSing(void);
     void hello(void);
     void shutUp(void);
-
+    
   private:
     int _status;
-}
+    int _start;
+    int _end;
+    int _getTime(char time[]);
+    int _getNow(void);
+};
 
 #endif
