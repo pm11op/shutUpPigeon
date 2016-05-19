@@ -5,7 +5,7 @@
 #include "Arduino.h"
 #include "ShutUpPigeon.h"
 #include "RTClib.h"
-
+#include <Servo.h>
 RTC_DS1307 RTC;
 
 ShutUpPigeon::ShutUpPigeon() {
@@ -30,6 +30,23 @@ void ShutUpPigeon::init(char start[], char end[]) {
      RTC.adjust(DateTime(F(__DATE__), F(__TIME__)));
   }
  
+}
+
+void ShutUpPigeon::setServo(int pin, int default_angle, int unit_angle) {
+  _servo.attach(pin);
+  _sing_servo_angle = default_angle;
+  _shutup_servo_angle = default_angle + unit_angle;
+  _current_servo_angle = default_angle;
+  delay(100);
+  
+  ShutUpPigeon::moveServo(_current_servo_angle);
+}
+
+void ShutUpPigeon::moveServo(int angle) {
+  _servo.write(angle);
+  Serial.println("");
+  Serial.print("servo: ");  
+  Serial.println(angle);
 }
 
 bool ShutUpPigeon::canSing() {
@@ -58,6 +75,7 @@ void ShutUpPigeon::hello() {
     return;
   }
   Serial.print("hi!");
+  ShutUpPigeon::moveServo(_sing_servo_angle);
   _status = 1;
 }
 
@@ -66,8 +84,10 @@ void ShutUpPigeon::shutUp() {
     return;
   }
   Serial.print("...");
+  ShutUpPigeon::moveServo(_shutup_servo_angle);
   _status = 2;
 }
+
 int ShutUpPigeon::_getNow() {
   DateTime now = RTC.now();
   int h = now.hour();
