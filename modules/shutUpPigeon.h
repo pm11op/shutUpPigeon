@@ -13,6 +13,7 @@ class ShutUpPigeon {
     void init(char start[], char end[]);
     void setServo(int pin, int default_angle, int unit_angle);
     bool canSing(void);
+    void countHour(void);
     void hello(void);
     void shutUp(void);
     void moveServo(int angle);

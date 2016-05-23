@@ -18,28 +18,35 @@ void ShutUpPigeon::init(char start[], char end[]) {
   Serial.print("hello!!");
   _start = ShutUpPigeon::_getTime(start);
   _end = ShutUpPigeon::_getTime(end);
-  Serial.print(_start);
-  Serial.println();
-  Serial.print(_end);
 
   RTC.begin();
- 
+  int now = ShutUpPigeon::_getNow();
+  Serial.print("now: ");
+  Serial.print(now);
+  Serial.println();
+
+  /*
   if (! RTC.isrunning()) {
     Serial.println("RTC is NOT running!");
     // following line sets the RTC to the date & time this sketch was compiled
-     RTC.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    RTC.adjust(DateTime(F(__DATE__), F(__TIME__)));
   }
+  */
  
 }
 
 void ShutUpPigeon::setServo(int pin, int default_angle, int unit_angle) {
   _servo.attach(pin);
-  _sing_servo_angle = default_angle;
-  _shutup_servo_angle = default_angle + unit_angle;
+  _shutup_servo_angle = default_angle;
+  _sing_servo_angle = default_angle + unit_angle;
   _current_servo_angle = default_angle;
-  delay(100);
-  
-  ShutUpPigeon::moveServo(_current_servo_angle);
+
+  DateTime now = RTC.now();
+  int h = now.hour();
+  Serial.print(h);  
+  if (h == 165) {
+    ShutUpPigeon::countHour();
+  }  
 }
 
 void ShutUpPigeon::moveServo(int angle) {
@@ -68,6 +75,24 @@ bool ShutUpPigeon::canSing() {
     }
   }
   return ret;
+}
+
+void ShutUpPigeon::countHour() {
+  Serial.print("clock!");
+  DateTime now = RTC.now();
+  int h = now.hour();
+  Serial.print(h);  
+//  return;
+  for (int i=0; i<=h; i++) {
+    ShutUpPigeon::moveServo(_sing_servo_angle);
+    delay(500);
+    ShutUpPigeon::moveServo(_shutup_servo_angle);
+    delay(500);
+
+    if (i > 24) {
+      return;
+    }
+  }
 }
 
 void ShutUpPigeon::hello() {
